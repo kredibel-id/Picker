@@ -5,7 +5,7 @@ plugins {
 
 group = 'io.kredibel' // <-- Full package name
 archivesBaseName = "picker" // nama artifak
-version = "0.0.1-beta-${getDate()}"
+version = "0.0.1-beta"
 
 publishing {
 
