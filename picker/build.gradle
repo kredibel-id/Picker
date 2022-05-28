@@ -5,9 +5,13 @@ plugins {
 
 group = 'io.kredibel' // <-- Full package name
 archivesBaseName = "picker" // nama artifak
-version = "0.0.1-beta"
+version = "0.0.1-beta1"
 
 publishing {
+
+    def Properties properties = new Properties()
+    properties.load(project.rootProject.file("local.properties").newDataInputStream())
+
 
     publications {
         aar(MavenPublication) {
@@ -22,8 +26,8 @@ publishing {
         maven {
             url 'https://repo.repsy.io/mvn/kredibel/sdk'
             credentials {
-                username 'kredibel'
-                password 'v3rL4Bf9VagdEYT'
+                username properties.getProperty("mavenUser", "")
+                password properties.getProperty("mavenPassword", "")
             }
         }
     }
@@ -54,9 +58,9 @@ android {
     }
 }
 
-static def getDate() {
+/*static def getDate() {
     return new Date().format('yyyyMMddHHmmss')
-}
+}*/
 
 dependencies {
 
