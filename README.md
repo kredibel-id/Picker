@@ -18,7 +18,7 @@ maven{url 'https://repo.repsy.io/mvn/kredibel/sdk'}
 #### 2. Add this dependency to gradle script on app module.
 ```groovy
 dependencies {
-    implementation 'io.kredibel:picker:0.0.1-beta' // Please check latest version
+    implementation 'io.kredibel:picker:0.0.1' // Please check latest version
 }
 ```
 ## Using Picker
