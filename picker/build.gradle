@@ -3,8 +3,8 @@ plugins {
     id 'maven-publish' // <-- Plugin Maven Publish
 }
 
-group = 'io.kredibel' // <-- Full package name
-archivesBaseName = "picker" // nama artifak
+group = 'io.kredibel' // <-- group name
+archivesBaseName = "picker" // <-- artifact name
 version = "0.0.1-beta2"
 
 publishing {
@@ -57,10 +57,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
-/*static def getDate() {
-    return new Date().format('yyyyMMddHHmmss')
-}*/
 
 dependencies {
 
