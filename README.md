@@ -72,5 +72,6 @@ picker.pickCamera((uri, file, bitmap) -> {
 });
 ```
 <br/><br/>
-<a target="_blank" href="https://github.com/kredibel-id/SamplePicker">See Sample</a>
+## Sample Project
+- <a target="_blank" href="https://github.com/kredibel-id/SamplePicker">See Sample [in Kotlin]</a>
 
