@@ -3,9 +3,11 @@
     Picker
 </h1>
 
-## Getting started
 ### Support API Level
 ![minsdk](https://img.shields.io/badge/Min%20SDK-API%2024-%233DDC84?logo=android) ![targetsdk](https://img.shields.io/badge/Max%20Support-API%2031-%233DDC84?logo=android)
+
+
+## Getting started
 
 ## Setup
 #### 1. Add kredibel repository.
