@@ -71,3 +71,5 @@ picker.pickCamera((uri, file, bitmap) -> {
     //do something;
 });
 ```
+<a target="_blank" href="https://github.com/kredibel-id/SamplePicker"><b>See Sample Project</b><a>
+
