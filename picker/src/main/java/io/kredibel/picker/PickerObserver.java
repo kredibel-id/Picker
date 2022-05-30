@@ -33,16 +33,23 @@ import static android.app.Activity.RESULT_OK;
 public class PickerObserver implements DefaultLifecycleObserver {
     private final ActivityResultRegistry registry;
     private final Activity activity;
+    private final Compressor compressor;
     private PickerListener pickerListener;
-    ActivityResultCallback<Uri> activityResultUri = new ActivityResultCallback<Uri>() {
+    ActivityResultCallback<Uri> galleryResultUri = new ActivityResultCallback<Uri>() {
         @Override
         public void onActivityResult(Uri uri) {
             if (uri != null) {
-                pickerListener.onPicked(uri, new File(uri.getPath()), uriToBitmap(uri));
+                try {
+                    File file = compressor.compressUritoFile(uri);
+                    pickerListener.onPicked(uri, file, uriToBitmap(uri));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
     };
-    ActivityResultCallback<ActivityResult> activityResultIntent = new ActivityResultCallback<ActivityResult>() {
+    ActivityResultCallback<ActivityResult> cameraResultIntent = new ActivityResultCallback<ActivityResult>() {
         @Override
         public void onActivityResult(ActivityResult result) {
             int resultCode = result.getResultCode();
@@ -50,6 +57,7 @@ public class PickerObserver implements DefaultLifecycleObserver {
             if (resultCode == RESULT_OK && data != null) {
                 Bundle bundle = data.getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
+                //File file = compressor.compressToFile()
 
                 ContextWrapper cw = new ContextWrapper(activity.getApplicationContext());
                 File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
@@ -76,20 +84,22 @@ public class PickerObserver implements DefaultLifecycleObserver {
     private ActivityResultLauncher<Intent> cameraLauncher;
 
     public PickerObserver(@NonNull AppCompatActivity activity) {
+        this.compressor = new Compressor(activity);
         this.activity = activity;
         this.registry = activity.getActivityResultRegistry();
     }
 
     public PickerObserver(@NonNull Fragment fr) {
         this.activity = fr.requireActivity();
+        this.compressor = new Compressor(this.activity);
         this.registry = fr.requireActivity().getActivityResultRegistry();
     }
 
     @Override
     public void onCreate(@NonNull LifecycleOwner owner) {
         DefaultLifecycleObserver.super.onCreate(owner);
-        imageLauncher = registry.register("key", owner, new ActivityResultContracts.GetContent(), activityResultUri);
-        cameraLauncher = registry.register("key1", owner, new ActivityResultContracts.StartActivityForResult(), activityResultIntent);
+        imageLauncher = registry.register("key", owner, new ActivityResultContracts.GetContent(), galleryResultUri);
+        cameraLauncher = registry.register("key1", owner, new ActivityResultContracts.StartActivityForResult(), cameraResultIntent);
     }
 
     private Bitmap uriToBitmap(Uri selectedFileUri) {
