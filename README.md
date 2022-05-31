@@ -15,10 +15,10 @@
 maven{url 'https://repo.repsy.io/mvn/kredibel/sdk'}
 ```
 
-#### 2. Add this dependency to gradle script on app module. 👉 <a href="https://github.com/kredibel-id/Picker/releases">Latest release</a>
+#### 2. Add this dependency to gradle script on app module. 👉 <a href="https://github.com/kredibel-id/Picker/releases">[Latest release]</a>
 ```groovy
 dependencies {
-    implementation 'io.kredibel:picker:0.0.1' // Please check latest version ☝️
+    implementation 'io.kredibel:picker:0.0.1' // Please check ☝️ latest version
 }
 ```
 ## Using Picker
