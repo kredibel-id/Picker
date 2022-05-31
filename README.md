@@ -21,6 +21,7 @@ dependencies {
     implementation 'io.kredibel:picker:0.0.1' // Please check latest version
 }
 ```
+👉 <a href="https://github.com/kredibel-id/Picker/releases">Latest release</a>
 ## Using Picker
 Initialize Picker object on your Activity or Fragment<br/>   
 ![java](https://img.shields.io/badge/-Java-%23B07119)
