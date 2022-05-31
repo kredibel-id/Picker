@@ -5,14 +5,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,7 +22,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.LifecycleOwner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 import static android.app.Activity.RESULT_OK;
@@ -38,7 +40,9 @@ public class PickerObserver implements DefaultLifecycleObserver {
         @Override
         public void onActivityResult(Uri uri) {
             if (uri != null) {
-                File file = new File(uri.getPath());
+                //File file = new File(uri.getPath());
+                Bitmap bitmap = uriToBitmap(uri);
+                File file = bitmapToFile(bitmap);
                 pickerListener.onPicked(uri, file, uriToBitmap(uri));
             }
         }
@@ -48,47 +52,45 @@ public class PickerObserver implements DefaultLifecycleObserver {
         public void onActivityResult(ActivityResult result) {
             int resultCode = result.getResultCode();
             Intent data = result.getData();
-            Uri uri = data.getData();
-
             if (resultCode == RESULT_OK) {
-                Bundle bundle = data.getExtras();
+                Bundle bundle = Objects.requireNonNull(data).getExtras();
                 Bitmap bitmap = (Bitmap) bundle.get("data");
-                //File file = compressor.compressToFile()
-
-                ContextWrapper cw = new ContextWrapper(activity.getApplicationContext());
-                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-
-                String child = new Random().nextInt(20) + System.currentTimeMillis() + "_picker" + ".jpg";
-
-                File file = new File(directory, child);
-                if (!file.exists()) {
-                    FileOutputStream fos;
-                    try {
-                        fos = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                        fos.flush();
-                        fos.close();
-                    } catch (java.io.IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                File file = bitmapToFile(bitmap);
                 pickerListener.onPicked(Uri.fromFile(file), file, bitmap);
             }
         }
     };
     private ActivityResultLauncher<String> imageLauncher;
     private ActivityResultLauncher<Intent> cameraLauncher;
-
     public PickerObserver(@NonNull AppCompatActivity activity) {
-        //this.compressor = new Compressor(activity);
         this.activity = activity;
         this.registry = activity.getActivityResultRegistry();
     }
 
     public PickerObserver(@NonNull Fragment fr) {
         this.activity = fr.requireActivity();
-        //this.compressor = new Compressor(this.activity);
         this.registry = fr.requireActivity().getActivityResultRegistry();
+    }
+
+    File bitmapToFile(Bitmap bitmap) {
+        ContextWrapper cw = new ContextWrapper(activity.getApplicationContext());
+        File directory = cw.getDir("imgDir", Context.MODE_PRIVATE);
+
+        String child = new Random().nextInt(20) + System.currentTimeMillis() + "_Picker" + ".jpg";
+
+        File file = new File(directory, child);
+        if (!file.exists()) {
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.flush();
+                fos.close();
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file;
     }
 
     @Override
@@ -122,64 +124,4 @@ public class PickerObserver implements DefaultLifecycleObserver {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraLauncher.launch(intent);
     }
-
-    private String getRealPathFromUri(Uri contentUri) {
-        Cursor cursor = null;
-        try {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            cursor = activity.getContentResolver().query(contentUri, proj, null, null, null);
-            assert cursor != null;
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-    }
-
-    public void importFile(Uri uri) {
-        String fileName = getFileName(uri);
-
-        // The temp file could be whatever you want
-        //File fileCopy = copyToTempFile(uri, File tempFile)
-
-        // Done!
-    }
-
-    private String getFileName(Uri uri) throws IllegalArgumentException {
-        // Obtain a cursor with information regarding this uri
-        Cursor cursor = activity.getContentResolver().query(uri, null, null, null, null);
-
-        if (cursor.getCount() <= 0) {
-            cursor.close();
-            throw new IllegalArgumentException("Can't obtain file name, cursor is empty");
-        }
-
-        cursor.moveToFirst();
-
-        String fileName = cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME));
-
-        cursor.close();
-
-        return fileName;
-    }
-
-
-    private File copyToTempFile(Uri uri, File tempFile) throws IOException {
-        // Obtain an input stream from the uri
-        InputStream inputStream = activity.getContentResolver().openInputStream(uri);
-
-        if (inputStream == null) {
-            throw new IOException("Unable to obtain input stream from URI");
-        }
-
-        // Copy the stream to the temp file
-        //FileUtils.copyInputStreamToFile(inputStream, tempFile);
-
-        return tempFile;
-    }
-
-
 }
