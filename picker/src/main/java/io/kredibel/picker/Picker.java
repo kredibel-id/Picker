@@ -37,4 +37,8 @@ public class Picker {
     public void pickGallery(PickerListener pickerListener) {
         observer.pickGallery(pickerListener);
     }
+
+    public void pickImage(PickerListener pickerListener){
+        observer.pickImage(pickerListener);
+    }
 }

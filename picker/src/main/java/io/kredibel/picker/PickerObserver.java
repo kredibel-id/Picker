@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.ActivityResultRegistry;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.DefaultLifecycleObserver;
@@ -62,6 +63,7 @@ public class PickerObserver implements DefaultLifecycleObserver {
     };
     private ActivityResultLauncher<String> imageLauncher;
     private ActivityResultLauncher<Intent> cameraLauncher;
+
     public PickerObserver(@NonNull AppCompatActivity activity) {
         this.activity = activity;
         this.registry = activity.getActivityResultRegistry();
@@ -90,7 +92,14 @@ public class PickerObserver implements DefaultLifecycleObserver {
                 e.printStackTrace();
             }
         }
-        return file;
+        File compresedFile;
+        FileCompressor fileCompressor = new FileCompressor(activity);
+        try {
+            compresedFile = fileCompressor.compressToFile(file);
+        } catch (IOException e) {
+            compresedFile = file;
+        }
+        return compresedFile;
     }
 
     @Override
@@ -123,5 +132,21 @@ public class PickerObserver implements DefaultLifecycleObserver {
         this.pickerListener = pickerListener;
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraLauncher.launch(intent);
+    }
+
+    public void pickImage(PickerListener pickerListener) {
+        final CharSequence[] options = {"From Camera", "From Gallery", "Cancel"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle("Pick Image!");
+        builder.setItems(options, (dialog, item) -> {
+            if (item == 0) {
+                pickCamera(pickerListener);
+            } else if (item == 1) {
+                pickGallery(pickerListener);
+            } else {
+                dialog.dismiss();
+            }
+        });
+        builder.show();
     }
 }
