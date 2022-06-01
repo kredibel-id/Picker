@@ -15,7 +15,7 @@
       android:layout_centerHorizontal="true"/>
   <Button
       android:id="@+id/btnGalery"
-      android:layout_toLeftOf="@+id/vCenter"
+      android:layout_toLeftOf="@+id/btnChoose"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="Take Galery"
@@ -24,10 +24,19 @@
 
   <Button
       android:id="@+id/btnCamera"
-      android:layout_toRightOf="@+id/vCenter"
+      android:layout_toRightOf="@+id/btnChoose"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="Take Camera"
+      android:layout_marginTop="10dp"
+      android:layout_centerHorizontal="true"/>
+
+  <Button
+      android:id="@+id/btnChoose"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      android:text="Choose"
       android:layout_marginTop="10dp"
       android:layout_centerHorizontal="true"/>
 
